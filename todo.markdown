@@ -4,10 +4,9 @@
 
 ## Write XS module to expose the API
 
-Inline::C as prototype
-Wrap/import vosk_api.h
-Deparse all JSON
-done
+[✓] Inline::C as prototype
+[✓] Wrap/import vosk_api.h
+[✓] Deparse all JSON
 
 Module name: Speech::Recognition::VOSK ?
 
