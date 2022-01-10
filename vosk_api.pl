@@ -30,36 +30,62 @@ SV* Vosk_vosk_recognizer_new(SV* model, double sample_rate) {
     res = newSViv((IV) recognizer);
     return res;
 }
+
+bool Vosk_vosk_recognizer_accept_waveform(SV* recognizer, SV* buf) {
+    char* payload;
+    STRLEN strlen;
+    bool final;
+
+    payload = SvPVbyte(buf,strlen);
+    VoskRecognizer* r;
+
+    r = (VoskRecognizer*)SvIV(recognizer);
+    final = vosk_recognizer_accept_waveform(r, payload, strlen);
+
+    return final;
+}
+
+char* Vosk_vosk_recognizer_partial_result(SV* recognizer) {
+    return vosk_recognizer_partial_result((VoskRecognizer*)SvIV(recognizer));
+}
+
+char* Vosk_vosk_recognizer_result(SV* recognizer) {
+    return vosk_recognizer_result((VoskRecognizer*)SvIV(recognizer));
+}
+
+char* Vosk_vosk_recognizer_final_result(SV* recognizer) {
+    return vosk_recognizer_final_result((VoskRecognizer*)SvIV(recognizer));
+}
 END_OF_C_CODE
 
 my $model = Vosk_vosk_model_new("model");
 my $recognizer = Vosk_vosk_recognizer_new($model, 44100);
 
-__END__
-#include <vosk_api.h>
-#include <stdio.h>
+binmode STDIN, ':raw';
 
-int main() {
-    char buf[3200];
-    int nread, final;
+use JSON 'decode_json';
 
-    VoskModel *model = vosk_model_new("model");
-    VoskRecognizer *recognizer = vosk_recognizer_new(model, 44100.0);
-
-    freopen(NULL, "rb", stdin);
-    while (!feof(stdin)) {
-         nread = fread(buf, 1, sizeof(buf), stdin);
-         final = vosk_recognizer_accept_waveform(recognizer, buf, nread);
-         if (final) {
-             printf("%s\n", vosk_recognizer_result(recognizer));
-         } else {
-             printf("%s\n", vosk_recognizer_partial_result(recognizer));
-         }
+while( ! eof(*STDIN)) {
+    read(STDIN, my $buf, 3200);
+    my $complete = Vosk_vosk_recognizer_accept_waveform($recognizer, $buf);
+    my $spoken;
+    if( $complete ) {
+        $spoken = Vosk_vosk_recognizer_result($recognizer);
+    } else {
+        $spoken = Vosk_vosk_recognizer_partial_result($recognizer);
     }
-    printf("%s\n", vosk_recognizer_final_result(recognizer));
+    # JSON-decode
 
-    vosk_recognizer_free(recognizer);
-    vosk_model_free(model);
-    fclose(stdin);
-    return 0;
+    my $info = decode_json($spoken);
+    if( $info->{text}) {
+        print $info->{text},"\n";
+    } else {
+        local $| = 1;
+        print $info->{partial}, "\r";
+    };
 }
+
+# Flush the buffers
+my $spoken = Vosk_vosk_recognizer_final_result($recognizer);
+print $spoken;
+
