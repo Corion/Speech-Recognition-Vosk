@@ -10,6 +10,10 @@ use Inline C => 'Config',
     ;
 
 use Inline C => << 'END_OF_C_CODE';
+int Vosk_vosk_model_find_word(SV* model, const char *word) {
+    return vosk_model_find_word((VoskModel*)SvIV(model), *word);
+}
+
 SV* Vosk_vosk_model_new(SV* modelname) {
     VoskModel* model;
     SV* res;
@@ -18,6 +22,11 @@ SV* Vosk_vosk_model_new(SV* modelname) {
 
     return res;
 }
+
+void Vosk_vosk_model_free(SV* model) {
+    vosk_model_free((VoskModel*)SvIV(model));
+}
+
 
 SV* Vosk_vosk_recognizer_new(SV* model, double sample_rate) {
     VoskRecognizer* recognizer;
@@ -29,6 +38,15 @@ SV* Vosk_vosk_recognizer_new(SV* model, double sample_rate) {
 
     res = newSViv((IV) recognizer);
     return res;
+}
+
+/* Implicitly also releases the model! */
+void Vosk_vosk_recognizer_free(SV *recognizer) {
+    vosk_recognizer_free((VoskRecognizer*) SvIV(recognizer));
+}
+
+void Vosk_vosk_recognizer_set_words(SV *recognizer, int words) {
+    vosk_recognizer_set_words((VoskRecognizer*)SvIV(recognizer), words);
 }
 
 bool Vosk_vosk_recognizer_accept_waveform(SV* recognizer, SV* buf) {
@@ -58,7 +76,7 @@ char* Vosk_vosk_recognizer_final_result(SV* recognizer) {
 }
 END_OF_C_CODE
 
-my $model = Vosk_vosk_model_new("model");
+my $model = Vosk_vosk_model_new("model-en");
 my $recognizer = Vosk_vosk_recognizer_new($model, 44100);
 Vosk_vosk_recognizer_set_words( $recognizer,1);
 print "Ready\n";
