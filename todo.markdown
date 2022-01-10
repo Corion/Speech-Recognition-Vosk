@@ -9,6 +9,8 @@ Wrap/import vosk_api.h
 Deparse all JSON
 done
 
+Module name: Speech::Recognition::VOSK ?
+
 ## Simple "read audio stream from ffmpeg, return hash" API
 
 ## Simple "read audio stream from ffmpeg, return hash" API, but async/pollable/feedable

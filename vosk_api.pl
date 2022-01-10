@@ -5,6 +5,7 @@ use Inline C => Config
     => autowrap => 1
     => auto_include => '#include "build/vosk-api/src/vosk_api.h"'
     => libs => '-Lbuild/vosk-api/src -lvosk -ldl -lpthread -Wl,-rpath=build/vosk-api/src'
+    # => name => 'Speech::Recognition::Vosk',
     ;
 
 sub read_vosk_headers {
