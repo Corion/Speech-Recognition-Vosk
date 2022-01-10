@@ -2,3 +2,13 @@ build/
 src/*.o
 src/stream_vosk
 _Inline
+Vosk.c
+*.bs
+*.o
+blib/
+Makefile
+pm_to_blib
+MYMETA.*
+model-en/
+model-de/
+src/model
