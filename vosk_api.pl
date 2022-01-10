@@ -60,6 +60,7 @@ END_OF_C_CODE
 
 my $model = Vosk_vosk_model_new("model");
 my $recognizer = Vosk_vosk_recognizer_new($model, 44100);
+Vosk_vosk_recognizer_set_words( $recognizer,1);
 print "Ready\n";
 
 binmode STDIN, ':raw';
