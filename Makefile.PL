@@ -10,7 +10,7 @@ use ExtUtils::MakeMaker qw(WriteMakefile);
 my $eumm_version = $ExtUtils::MakeMaker::VERSION;
 $eumm_version =~ s/_//;
 
-my $module = 'Speech::Vosk';
+my $module = 'Speech::Recognition::Vosk';
 (my $main_file = "lib/$module.pm" ) =~ s!::!/!g;
 (my $distbase = $module) =~ s!::!-!g;
 my $distlink = $distbase;
@@ -48,6 +48,8 @@ my %module = (
     BUILD_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
     },
+
+    LIBS => '-L/home/corion/Projekte/vosk/build/vosk-api/src -lvosk -ldl -lpthread -Wl,-rpath=/home/corion/Projekte/vosk/build/vosk-api/src',
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
