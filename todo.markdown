@@ -8,7 +8,7 @@
 [✓] Wrap/import vosk_api.h
 [✓] Deparse all JSON
 
-Module name: Speech::Recognition::VOSK ?
+Module name: Speech::Recognition::Vosk
 
 ## Simple "read audio stream from ffmpeg, return hash" API
 
@@ -16,9 +16,12 @@ Module name: Speech::Recognition::VOSK ?
 
 # Things to do before after release/talk
 
-Investigate how to use the OS supplied/packaged lapack instead of vendored
-clapack
+[ ] Split up in Alien::Vosk and Speech::Recognition::Vosk
+    This means that we can maybe (re)use a local Vosk build instead of always
+    trying to create our own.
 
-Use OG lapack instead of vendored lapack
+[ ] Investigate how to use the OS supplied/packaged lapack instead of vendored
+    clapack
 
-http://www.netlib.org/lapack/
+[ ] Vendor OG lapack instead of 2008 clapack
+    http://www.netlib.org/lapack/
