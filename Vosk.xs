@@ -76,6 +76,11 @@ Vosk_recognizer_final_result(SV* recognizer) {
     return vosk_recognizer_final_result((VoskRecognizer*)SvIV(recognizer));
 }
 
+void
+Vosk_set_log_level(int log_level) {
+    vosk_set_log_level(log_level);
+}
+
 MODULE = Speech::Recognition::Vosk  PACKAGE = Speech::Recognition::Vosk  PREFIX = Vosk_
 
 PROTOTYPES: DISABLE
@@ -160,4 +165,11 @@ Vosk_recognizer_result (recognizer)
 char *
 Vosk_recognizer_final_result (recognizer)
 	SV *	recognizer
+
+void
+Vosk_set_log_level(log_level)
+    int log_level
+        PPCODE:
+        vosk_set_log_level(log_level);
+        return;
 
