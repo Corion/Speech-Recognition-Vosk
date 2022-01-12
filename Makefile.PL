@@ -18,7 +18,7 @@ my $distlink = $distbase;
 
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
-my $vosk = $ENV{VOSK_SRC} || "dirname($0)/build/vosk-api/src";
+my $vosk = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
 
 my %module = (
     NAME                => $module,
@@ -89,7 +89,7 @@ if( ! caller ) {
     # Maybe this could be done in Perl, but for the time being, building on
     # Windows is a pipe dream anyway, so we'll just assume that bash, git
     # make and autoconf are available.
-    if(! $ENV{VOSK_SRC}) {
+    if((! $ENV{VOSK_SRC}) && (! $ENV{CPAN_RELEASE})) {
         print "Downloading/building Vosk to ${vosk}.\n";
         print "Set \$ENV{VOSK_SRC} to point to a precompiled instance\n";
         system("./build-vosk-api.sh") == 0

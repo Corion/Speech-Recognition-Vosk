@@ -26,5 +26,8 @@ Module name: Speech::Recognition::Vosk
 [ ] Investigate how to use the OS supplied/packaged lapack instead of vendored
     clapack
 
+[ ] Investigate how to use the OS supplied/packaged openblas instead of
+    vendored version (Debian: libopenblas0 and libopenblas64-0)
+
 [ ] Vendor OG lapack instead of 2008 clapack
     http://www.netlib.org/lapack/
