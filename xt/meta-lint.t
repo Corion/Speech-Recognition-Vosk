@@ -18,7 +18,9 @@ eval {
 if ($@) {
   plan skip_all => "CPAN::Meta::Validator version 2.15 required for testing META files";
 }
-else {
+elsif( $ENV{CPAN_RELEASE}) {
+    plan skip_all => "Release";
+} else {
   plan tests => 4;
 }
 

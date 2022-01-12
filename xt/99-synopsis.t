@@ -12,6 +12,11 @@ my @files;
 my $blib = File::Spec->catfile(qw(blib lib));
 find(\&wanted, grep { -d } ($blib));
 
+if( $ENV{CPAN_RELEASE}) {
+    plan skip_all => "Release";
+    exit;
+}
+
 #if( my $exe = $module{EXE_FILES}) {
 #    push @files, @$exe;
 #};

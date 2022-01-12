@@ -11,7 +11,12 @@ BEGIN {
     };
 };
 
-plan 'no_plan';
+if( $ENV{CPAN_RELEASE}) {
+    plan skip_all => "Release";
+    exit;
+} else {
+    plan 'no_plan';
+};
 
 require './Makefile.PL';
 # Loaded from Makefile.PL

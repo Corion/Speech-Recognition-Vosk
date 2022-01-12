@@ -2,7 +2,7 @@
 use warnings;
 use strict;
 use File::Find;
-use Test::More tests => 2;
+use Test::More;
 
 =head1 PURPOSE
 
@@ -11,6 +11,12 @@ mentions the current version and that a
 release date is mentioned as well
 
 =cut
+
+if( $ENV{CPAN_RELEASE}) {
+    plan skip_all => "Release";
+} else {
+    plan tests => 2;
+};
 
 require './Makefile.PL';
 # Loaded from Makefile.PL

@@ -32,7 +32,11 @@ sub wanted {
   push @files, $File::Find::name if /\.p(l|m|od)$/;
 }
 
-plan tests => 0+@files;
+if( $ENV{CPAN_RELEASE}) {
+    plan skip_all => "Release";
+} else {
+    plan tests => 0+@files;
+};
 
 my $last_version = undef;
 
