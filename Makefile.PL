@@ -47,21 +47,21 @@ my %module = (
     PL_FILES            => {},
     BUILD_REQUIRES => {
         'ExtUtils::MakeMaker' => 0,
+        'Alien::cmake3'       => 0,
     },
 
     LIBS => '-L/home/corion/Projekte/vosk/build/vosk-api/src -lvosk -ldl -lpthread -Wl,-rpath=/home/corion/Projekte/vosk/build/vosk-api/src',
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
-        'Alien::cmake3'      => 0, # we need it for building
-        #'Alien::git'        => 0, # we need it for checking out the builds
-        #'Alien::lapack'     => 0, # we need clapack for building vosk, but it's also vendored
-        'JSON'               => 0, # for the API results
+        'XSLoader'           => 0,
+
+        'Filter::signatures' => '0.09',
+        'Moo'                => 2, # for some hashes-as-objects
+        'JSON'               => 0,
     },
     TEST_REQUIRES => {
         'Test::More'   => 0,
-        'Test::Deep'   => 0,
-        'Data::Dumper' => 0,
     },
 
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
