@@ -2,6 +2,7 @@
 
 use strict;
 use ExtUtils::MakeMaker qw(WriteMakefile);
+use File::Basename 'dirname';
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -16,6 +17,8 @@ my $module = 'Speech::Recognition::Vosk';
 my $distlink = $distbase;
 
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
+
+my $vosk = $ENV{VOSK_SRC} || "dirname($0)/build/vosk-api/src";
 
 my %module = (
     NAME                => $module,
@@ -46,11 +49,12 @@ my %module = (
 
     PL_FILES            => {},
     BUILD_REQUIRES => {
+        'File::Basename'      => 0,
         'ExtUtils::MakeMaker' => 0,
         'Alien::cmake3'       => 0,
     },
 
-    LIBS => '-L/home/corion/Projekte/vosk/build/vosk-api/src -lvosk -ldl -lpthread -Wl,-rpath=/home/corion/Projekte/vosk/build/vosk-api/src',
+    LIBS => "-L${vosk} -lvosk -ldl -lpthread -Wl,-rpath=${vosk}",
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
@@ -80,6 +84,18 @@ if( ! caller ) {
     # I should maybe use something like Shipwright...
     regen_README($main_file);
     regen_EXAMPLES() if -d 'examples';
+
+    # Actually build the Vosk prerequisites, unless they are specified already:
+    # Maybe this could be done in Perl, but for the time being, building on
+    # Windows is a pipe dream anyway, so we'll just assume that bash, git
+    # make and autoconf are available.
+    if(! $ENV{VOSK_SRC}) {
+        print "Downloading/building Vosk to ${vosk}.\n";
+        print "Set \$ENV{VOSK_SRC} to point to a precompiled instance\n";
+        system("./build-vosk-api.sh") == 0
+            or die "Building prerequisites failed, see above.";
+    };
+
     WriteMakefile1(get_module_info);
 };
 
@@ -134,6 +150,13 @@ tool you use to manage your installation of Perl, e.g. any of
 The Makefile.PL will download and compile the prerequisite C parts. If
 the automatic build fails, you'll have to run the shell
 script C<build-vosk-api.sh> yourself.
+
+The build file expects the following programs to be available:
+
+    cmake
+    autoconf
+    git
+    bash
 
 Consult https://www.cpan.org/modules/INSTALL.html for further instruction.
 Should you wish to install this module manually, the procedure is
