@@ -92,14 +92,23 @@ if( ! caller ) {
     if((! $ENV{VOSK_SRC}) && (! $ENV{CPAN_RELEASE})) {
         print "Downloading/building Vosk to ${vosk}.\n";
         print "Set \$ENV{VOSK_SRC} to point to a precompiled instance\n";
-        system("./build-vosk-api.sh") == 0
-            or die "Building prerequisites failed, see above.";
     };
 
     WriteMakefile1(get_module_info);
 };
 
 1;
+
+# Build the stuff
+sub MY::postamble {
+    if(( !$ENV{VOSK_SRC}) && (! $ENV{CPAN_RELEASE})) {
+        return <<"MAKE_FRAG";
+\t\$(MYEXTLIB): build build/vosk-api build/vosk-api/src build/vosk-api/src/libvosk.\$(DLEXT)
+\t\t./build-vosk-api.sh
+
+MAKE_FRAG
+    };
+}
 
 sub WriteMakefile1 {  #Written by Alexandr Ciornii, version 0.21. Added by eumm-upgrade.
     my %params=@_;
