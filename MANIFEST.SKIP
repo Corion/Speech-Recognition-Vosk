@@ -24,3 +24,7 @@ Makefile$
 ^build/
 ^model-.*
 ^model
+src/
+^.*\.o
+^.*\.inc
+^.*\.c
