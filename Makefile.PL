@@ -131,6 +131,10 @@ tool you use to manage your installation of Perl, e.g. any of
   cpan  .
   cpanp -i .
 
+The Makefile.PL will download and compile the prerequisite C parts. If
+the automatic build fails, you'll have to run the shell
+script C<build-vosk-api.sh> yourself.
+
 Consult https://www.cpan.org/modules/INSTALL.html for further instruction.
 Should you wish to install this module manually, the procedure is
 
