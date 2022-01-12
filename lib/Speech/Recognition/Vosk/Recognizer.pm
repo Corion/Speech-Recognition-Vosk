@@ -78,7 +78,7 @@ sub BUILD( $self, $args ) {
 
 sub DESTROY($self) {
     # Implicitly also destroys the model!
-    Speech::Recognition::Vosk::recognizer_free($self)
+    Speech::Recognition::Vosk::recognizer_free($self->_recognizer)
 }
 
 =head2 C<< ->accept_waveform >>
