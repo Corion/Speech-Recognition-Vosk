@@ -2,6 +2,7 @@
 #include "perl.h"
 #include "XSUB.h"
 #include "build/vosk-api/src/vosk_api.h"
+
 int
 Vosk_model_find_word(SV* model, const char *word) {
     return vosk_model_find_word((VoskModel*)SvIV(model), word);

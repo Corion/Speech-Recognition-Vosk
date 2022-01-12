@@ -8,6 +8,17 @@ Speech::Recognition::Vosk::set_log_level(-1); # silence
 my $model = Speech::Recognition::Vosk::model_new("model-en");
 my $recognizer = Speech::Recognition::Vosk::recognizer_new($model, 44100);
 Speech::Recognition::Vosk::recognizer_set_words( $recognizer,1);
+
+print Speech::Recognition::Vosk::model_find_word($model, "perl") != -1
+    ? "We recognize the word 'perl'"
+    : "We don't recognize the word 'perl'"
+    , "\n";
+
+print Speech::Recognition::Vosk::model_find_word($model, "hello") != -1
+    ? "We recognize the word 'hello'"
+    : "We don't recognize the word 'hello'"
+    , "\n";
+
 print "Ready\n";
 
 binmode STDIN, ':raw';

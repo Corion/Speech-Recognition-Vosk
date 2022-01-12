@@ -16,6 +16,9 @@ Module name: Speech::Recognition::Vosk
 
 # Things to do before after release/talk
 
+[✓] Add destructors to Vosk::Recognizer to at least release the recognizer
+    models get implicitly released when the recognizer is released
+
 [ ] Split up in Alien::Vosk and Speech::Recognition::Vosk
     This means that we can maybe (re)use a local Vosk build instead of always
     trying to create our own.
