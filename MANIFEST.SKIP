@@ -22,3 +22,5 @@ Makefile$
 ^.*.cmd
 ^chrome-versions
 ^build/
+^model-.*
+^model
