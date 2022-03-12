@@ -27,7 +27,7 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
   binmode $voice, ':raw';
 
   while( ! eof($voice)) {
-      read(STDIN, my $buf, 3200);
+      read($voice, my $buf, 3200);
 
       my $complete = $recognizer->accept_waveform($buf);
       my $spoken;
@@ -36,6 +36,7 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
       } else {
           $spoken = $recognizer->partial_result();
       }
+      my $info = decode_json($spoken);
       if( $info->{text}) {
           print $info->{text},"\n";
       } else {
