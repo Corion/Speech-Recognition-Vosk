@@ -18,7 +18,13 @@ my $distlink = $distbase;
 
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
-my $vosk = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
+my $vosk_src = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
+my $build    = (($^O ne 'Win32') && ! -d $vosk_src)
+               || $ENV{VOSK_BUILD}
+               ;
+
+# Don't rebuild for a CPAN release
+$build = $build && ! $ENV{CPAN_RELEASE};
 
 my %module = (
     NAME                => $module,
@@ -54,7 +60,7 @@ my %module = (
         'Alien::cmake3'       => 0,
     },
 
-    LIBS => "-L${vosk} -lvosk -ldl -lpthread -Wl,-rpath=${vosk}",
+    LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}",
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
@@ -89,8 +95,9 @@ if( ! caller ) {
     # Maybe this could be done in Perl, but for the time being, building on
     # Windows is a pipe dream anyway, so we'll just assume that bash, git
     # make and autoconf are available.
-    if((! $ENV{VOSK_SRC}) && (! $ENV{CPAN_RELEASE})) {
-        print "Downloading/building Vosk to ${vosk}.\n";
+    if($build) {
+        print "Assuming that bash, git, make and autoconf packages are available\n";
+        print "Downloading/building Vosk to ${vosk_src}.\n";
         print "Set \$ENV{VOSK_SRC} to point to a precompiled instance\n";
     };
 
@@ -101,7 +108,7 @@ if( ! caller ) {
 
 # Build the stuff
 sub MY::postamble {
-    if(( !$ENV{VOSK_SRC}) && (! $ENV{CPAN_RELEASE})) {
+    if($build) {
         return <<"MAKE_FRAG";
 \t\$(MYEXTLIB): build build/vosk-api build/vosk-api/src build/vosk-api/src/libvosk.\$(DLEXT)
 \t\t./build-vosk-api.sh
