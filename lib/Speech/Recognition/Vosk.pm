@@ -1,7 +1,9 @@
 package Speech::Recognition::Vosk;
 use strict;
+use 5.012; # //=
+use Carp 'croak';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
@@ -48,7 +50,32 @@ L<Speech::Recognition::Vosk::Recognizer>.
 
 =cut
 
-require XSLoader;
-XSLoader::load(__PACKAGE__, $VERSION);
+sub import_win32 {
+    # Bind the functions from the precompiled DLL
+    require Speech::Recognition::Vosk::Win32;
+    Speech::Recognition::Vosk::Win32->import;
+}
+
+sub import_xs {
+    require XSLoader;
+    XSLoader::load(__PACKAGE__, $VERSION);
+}
+
+sub import {
+    my %args = @_;
+    if( $^O eq 'MSWin32' ) {
+        $args{binding} //= 'win32';
+    } else {
+        $args{binding} //= 'xs';
+    }
+
+    if( $args{ binding } eq 'xs' ) {
+        import_xs();
+    } elsif( $args{ binding } eq 'win32' ) {
+        import_win32();
+    } else {
+        croak "Unknown binding '$args{binding}'";
+    }
+}
 
 1;
