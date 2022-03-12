@@ -22,7 +22,7 @@ my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
 my $vosk_src = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
 my $load_dll = ($^O eq 'MSWin32' && ! $ENV{VOSK_SRC});
-my $build    =    ! -d $vosk_src
+my $build    =    (! -d $vosk_src && ! $load_dll)
                || $ENV{VOSK_BUILD}
                ;
 
