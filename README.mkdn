@@ -6,7 +6,7 @@
 
 # NAME
 
-Speech::Recognition::Vosk - offline voice recognition using the Vosk toolkit
+Speech::Recognition::Vosk - offline speech recognition using the Vosk toolkit
 
 # SYNOPSIS
 

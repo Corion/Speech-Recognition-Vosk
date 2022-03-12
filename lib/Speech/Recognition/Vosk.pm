@@ -5,7 +5,7 @@ our $VERSION = '0.01';
 
 =head1 NAME
 
-Speech::Recognition::Vosk - offline voice recognition using the Vosk toolkit
+Speech::Recognition::Vosk - offline speech recognition using the Vosk toolkit
 
 =head1 SYNOPSIS
 
