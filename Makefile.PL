@@ -3,6 +3,8 @@
 use strict;
 use ExtUtils::MakeMaker qw(WriteMakefile);
 use File::Basename 'dirname';
+use File::Copy 'cp';
+use File::ShareDir::Install;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -23,8 +25,9 @@ my $build    = (($^O ne 'MSWin32') && ! -d $vosk_src)
                || $ENV{VOSK_BUILD}
                ;
 
-my (@ffi_stuff, @build_requires, @LIBS);
+my (@ffi_stuff, @build_requires, @LIBS, $XS);
 if( $build ) {
+    print "Will download and compile Vosk\n";
     @ffi_stuff = (        'XSLoader'           => 0 );
     @build_requires = (
         'File::Basename'      => 0,
@@ -32,9 +35,14 @@ if( $build ) {
         'Alien::cmake3'       => 0,
     );
     @LIBS = (LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}" );
+    cp( 'Vosk.xs.in' => 'Vosk.xs' );
+    $XS = {'Vosk.xs' => 'Vosk.c' };
 } else {
+    print "Will use prebuilt Win32 DLL\n";
     @ffi_stuff = (        'Win32::API'         => 0 );
     @build_requires = ();
+    $XS = {};
+    install_share('vosk-win64-0.3.32');
 }
 
 # Don't rebuild for a CPAN release
@@ -73,6 +81,11 @@ my %module = (
     },
 
     @LIBS,
+    XS => $XS,
+    
+    CONFIGURE_REQUIRES => {
+        "File::ShareDir::Install" => 0,
+    },
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
