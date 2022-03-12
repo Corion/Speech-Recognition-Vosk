@@ -24,7 +24,6 @@ while( ! eof($voice)) {
     if( $info->{text}) {
         print $info->{text},"\n";
     } else {
-        local $| = 1;
         print $info->{partial}, "\r";
     };
 };
