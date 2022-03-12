@@ -21,12 +21,13 @@ my $distlink = $distbase;
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
 my $vosk_src = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
-my $build    = (($^O ne 'MSWin32') && ! -d $vosk_src)
+my $load_dll = ($^O eq 'MSWin32' && ! $ENV{VOSK_SRC});
+my $build    =    ! -d $vosk_src
                || $ENV{VOSK_BUILD}
                ;
 
 my (@ffi_stuff, @build_requires, @LIBS, $XS);
-if( $build ) {
+if( !$load_dll ) {
     print "Will download and compile Vosk\n";
     @ffi_stuff = (        'XSLoader'           => 0 );
     @build_requires = (
@@ -37,7 +38,7 @@ if( $build ) {
     @LIBS = (LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}" );
     cp( 'Vosk.xs.in' => 'Vosk.xs' );
     $XS = {'Vosk.xs' => 'Vosk.c' };
-} else {
+} elsif( $load_dll ) {
     print "Will use prebuilt Win32 DLL\n";
     @ffi_stuff = (        'Win32::API'         => 0 );
     @build_requires = ();
@@ -82,14 +83,14 @@ my %module = (
 
     @LIBS,
     XS => $XS,
-    
+
     CONFIGURE_REQUIRES => {
         "File::ShareDir::Install" => 0,
     },
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
-        
+
         @ffi_stuff,
 
         'Filter::signatures' => '0.09',
@@ -101,7 +102,7 @@ my %module = (
     },
 
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean               => { FILES => "$distbase-*" },
+    clean               => { FILES => "$distbase-* Vosk.xs" },
 
     test            => { TESTS => join( ' ', @tests ) },
 );

@@ -13,7 +13,7 @@ scripts/vosk-recognizer.pl
 t/00-load.t
 testrules.yml
 todo.markdown
-Vosk.xs
+Vosk.xs.in
 xt/99-changes.t
 xt/99-compile.t
 xt/99-manifest.t
