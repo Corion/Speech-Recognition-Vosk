@@ -19,9 +19,23 @@ my $distlink = $distbase;
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
 my $vosk_src = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
-my $build    = (($^O ne 'Win32') && ! -d $vosk_src)
+my $build    = (($^O ne 'MSWin32') && ! -d $vosk_src)
                || $ENV{VOSK_BUILD}
                ;
+
+my (@ffi_stuff, @build_requires, @LIBS);
+if( $build ) {
+    @ffi_stuff = (        'XSLoader'           => 0 );
+    @build_requires = (
+        'File::Basename'      => 0,
+        'ExtUtils::MakeMaker' => 0,
+        'Alien::cmake3'       => 0,
+    );
+    @LIBS = (LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}" );
+} else {
+    @ffi_stuff = (        'Win32::API'         => 0 );
+    @build_requires = ();
+}
 
 # Don't rebuild for a CPAN release
 $build = $build && ! $ENV{CPAN_RELEASE};
@@ -45,26 +59,25 @@ my %module = (
             },
             license    => "https://dev.perl.org/licenses/",
         },
-        dynamic_config   => 0, # we promise to keep META.* up-to-date
-        x_static_install => 1, # we are pure Perl and don't do anything fancy
+        dynamic_config   => 1, # we have a fancy OS dependent setup
+        x_static_install => 0, # we have a fancy OS dependent setup
     },
 
-    MIN_PERL_VERSION => '5.010', # I use // in some places
+    MIN_PERL_VERSION => '5.012', # I use // in some places
 
     'LICENSE'=> 'perl',
 
     PL_FILES            => {},
     BUILD_REQUIRES => {
-        'File::Basename'      => 0,
-        'ExtUtils::MakeMaker' => 0,
-        'Alien::cmake3'       => 0,
+        @build_requires,
     },
 
-    LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}",
+    @LIBS,
 
     PREREQ_PM => {
         'Exporter'           => 5, # for 'import'
-        'XSLoader'           => 0,
+        
+        @ffi_stuff,
 
         'Filter::signatures' => '0.09',
         'Moo'                => 2, # for some hashes-as-objects
