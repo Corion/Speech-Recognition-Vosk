@@ -2,10 +2,12 @@
 use strict;
 use Speech::Recognition::Vosk;
 
+binmode STDOUT, ':encoding(UTF-8)';
 print "Loading model\n";
 Speech::Recognition::Vosk::set_log_level(-1); # silence
 
 my $model = Speech::Recognition::Vosk::model_new("model-en");
+#my $model = Speech::Recognition::Vosk::model_new("model-de");
 my $recognizer = Speech::Recognition::Vosk::recognizer_new($model, 44100);
 Speech::Recognition::Vosk::recognizer_set_words( $recognizer,1);
 
