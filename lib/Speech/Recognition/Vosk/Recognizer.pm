@@ -64,7 +64,7 @@ has sample_rate => (
 has model => (
     is => 'lazy',
     default => sub( $self ) {
-        warn "Loading model '$self->{model_dir}'";
+        #warn "Loading model '$self->{model_dir}'";
         Speech::Recognition::Vosk::model_new($self->{model_dir})
     },
 );
