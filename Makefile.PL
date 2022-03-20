@@ -2,9 +2,6 @@
 
 use strict;
 use ExtUtils::MakeMaker qw(WriteMakefile);
-use File::Basename 'dirname';
-use File::Copy 'cp';
-use File::ShareDir::Install;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 
@@ -20,34 +17,15 @@ my $distlink = $distbase;
 
 my @tests = map { glob $_ } 't/*.t', 't/*/*.t';
 
-my $vosk_src = $ENV{VOSK_SRC} || (dirname($0). "/build/vosk-api/src");
-my $load_dll = ($^O eq 'MSWin32' && ! $ENV{VOSK_SRC});
-my $build    =    (! -d $vosk_src && ! $load_dll)
-               || $ENV{VOSK_BUILD}
-               ;
+my $win32_impl = ($^O eq 'MSWin32' && ! $ENV{VOSK_SRC});
 
-my (@ffi_stuff, @build_requires, @LIBS, $XS);
-if( !$load_dll ) {
-    print "Will download and compile Vosk\n";
-    @ffi_stuff = (        'XSLoader'           => 0 );
-    @build_requires = (
-        'File::Basename'      => 0,
-        'ExtUtils::MakeMaker' => 0,
-        'Alien::cmake3'       => 0,
-    );
-    @LIBS = (LIBS => "-L${vosk_src} -lvosk -ldl -lpthread -Wl,-rpath=${vosk_src}" );
-    cp( 'Vosk.xs.in' => 'Vosk.xs' );
-    $XS = {'Vosk.xs' => 'Vosk.c' };
-} elsif( $load_dll ) {
-    print "Will use prebuilt Win32 DLL\n";
-    @ffi_stuff = (        'Win32::API'         => 0 );
-    @build_requires = ();
-    $XS = {};
-    install_share('vosk-win64-0.3.32');
-}
+my @prereqs;
 
-# Don't rebuild for a CPAN release
-$build = $build && ! $ENV{CPAN_RELEASE};
+if( $win32_impl ) {
+    @prereqs = ('Speech::Recognition::Vosk::Impl::Win32' => 0);
+} else {
+    @prereqs = ('Speech::Recognition::Vosk::Impl::XS' => 0);
+};
 
 my %module = (
     NAME                => $module,
@@ -76,26 +54,14 @@ my %module = (
 
     'LICENSE'=> 'perl',
 
-    PL_FILES            => {},
-    BUILD_REQUIRES => {
-        @build_requires,
-    },
-
-    @LIBS,
-    XS => $XS,
-
     CONFIGURE_REQUIRES => {
-        "File::ShareDir::Install" => 0,
     },
 
     PREREQ_PM => {
-        'Exporter'           => 5, # for 'import'
-
-        @ffi_stuff,
-
         'Filter::signatures' => '0.09',
         'Moo'                => 2, # for some hashes-as-objects
         'JSON'               => 0,
+        @prereqs,
     },
     TEST_REQUIRES => {
         'Test::More'   => 0,
@@ -118,31 +84,10 @@ if( ! caller ) {
     regen_README($main_file);
     regen_EXAMPLES() if -d 'examples';
 
-    # Actually build the Vosk prerequisites, unless they are specified already:
-    # Maybe this could be done in Perl, but for the time being, building on
-    # Windows is a pipe dream anyway, so we'll just assume that bash, git
-    # make and autoconf are available.
-    if($build) {
-        print "Assuming that bash, git, make and autoconf packages are available\n";
-        print "Downloading/building Vosk to ${vosk_src}.\n";
-        print "Set \$ENV{VOSK_SRC} to point to a precompiled instance\n";
-    };
-
     WriteMakefile1(get_module_info);
 };
 
 1;
-
-# Build the stuff
-sub MY::postamble {
-    if($build) {
-        return <<"MAKE_FRAG";
-\t\$(MYEXTLIB): build build/vosk-api build/vosk-api/src build/vosk-api/src/libvosk.\$(DLEXT)
-\t\t./build-vosk-api.sh
-
-MAKE_FRAG
-    };
-}
 
 sub WriteMakefile1 {  #Written by Alexandr Ciornii, version 0.21. Added by eumm-upgrade.
     my %params=@_;
