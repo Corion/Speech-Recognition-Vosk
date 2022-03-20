@@ -3,7 +3,17 @@ use strict;
 use 5.012; # //=
 use Carp 'croak';
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
+
+our @EXPORT_OK = (qw(
+    model_new
+    model_find_word
+    recognizer_new
+    recognizer_accept_waveform
+    recognizer_partial_result
+    recognizer_result
+    recognizer_final_result
+));
 
 =head1 NAME
 
@@ -50,17 +60,6 @@ L<Speech::Recognition::Vosk::Recognizer>.
 
 =cut
 
-sub import_win32 {
-    # Bind the functions from the precompiled DLL
-    require Speech::Recognition::Vosk::Win32;
-    Speech::Recognition::Vosk::Win32->import;
-}
-
-sub import_xs {
-    require XSLoader;
-    XSLoader::load(__PACKAGE__, $VERSION);
-}
-
 sub import {
     my %args = @_;
     if( $^O eq 'MSWin32' ) {
@@ -69,13 +68,18 @@ sub import {
         $args{binding} //= 'xs';
     }
 
+    my $impl;
     if( $args{ binding } eq 'xs' ) {
-        import_xs();
+        $impl = 'Speech::Recognition::Vosk::Impl::XS';
     } elsif( $args{ binding } eq 'win32' ) {
-        import_win32();
+        $impl = 'Speech::Recognition::Vosk::Impl::Win32';
     } else {
         croak "Unknown binding '$args{binding}'";
     }
+
+    (my $module = $impl) =~ s!::!/!g;
+    require $module;
+    $impl->import(@EXPORT_OK);
 }
 
 1;
