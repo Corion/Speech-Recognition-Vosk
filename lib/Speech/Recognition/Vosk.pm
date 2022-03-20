@@ -9,6 +9,7 @@ our @EXPORT_OK = (qw(
     model_new
     model_find_word
     recognizer_new
+    recognizer_free
     recognizer_accept_waveform
     recognizer_partial_result
     recognizer_result
@@ -78,7 +79,7 @@ sub import {
     }
 
     (my $module = $impl) =~ s!::!/!g;
-    require $module;
+    require "$module.pm";
     $impl->import(@EXPORT_OK);
 }
 

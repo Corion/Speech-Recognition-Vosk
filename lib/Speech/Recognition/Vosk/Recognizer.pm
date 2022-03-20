@@ -93,7 +93,7 @@ and a completed utterance is available.
 =cut
 
 sub accept_waveform($self,$buf) {
-    return Speech::Recognition::Vosk::recognizer_accept_waveform($self->_recognizer,$buf);
+    return Speech::Recognition::Vosk::recognizer_accept_waveform($self->_recognizer,$buf, length $buf);
 };
 
 =head2 C<< ->result >>
