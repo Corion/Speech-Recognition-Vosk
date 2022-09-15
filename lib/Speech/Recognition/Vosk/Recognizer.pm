@@ -70,16 +70,17 @@ has model => (
 );
 
 has '_recognizer' => (
-    is => 'ro',
+    is => 'lazy',
+    default => sub( $self ) {
+        Speech::Recognition::Vosk::recognizer_new($self->model, $self->sample_rate);
+    },
 );
-
-sub BUILD( $self, $args ) {
-    $self->{_recognizer} = Speech::Recognition::Vosk::recognizer_new($self->model, $self->{sample_rate});
-}
 
 sub DESTROY($self) {
     # Implicitly also destroys the model!
-    Speech::Recognition::Vosk::recognizer_free($self->_recognizer)
+    if( $self->{_recognizer} ) {
+        Speech::Recognition::Vosk::recognizer_free($self->_recognizer)
+    }
 }
 
 =head2 C<< ->accept_waveform >>
