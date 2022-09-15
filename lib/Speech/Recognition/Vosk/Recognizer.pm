@@ -51,11 +51,6 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
 
 =head2 C<< ->new >>
 
-  my $recognizer = Speech::Recognition::Vosk::Recognizer->new(
-      model_dir => 'model-en',
-      sample_rate => 44100,
-  );
-
 =cut
 
 has model_dir => (
@@ -70,7 +65,7 @@ has model => (
     is => 'lazy',
     default => sub( $self ) {
         #warn "Loading model '$self->{model_dir}'";
-        Speech::Recognition::Vosk::model_new($self->{model_dir})
+        Speech::Recognition::Vosk::model_new($self->model_dir)
     },
 );
 
