@@ -9,8 +9,7 @@ Speech-Recognition-Vosk-*
 Speech-Recognition-Vosk-*/
 .releaserc
 cover_db
-firefox-versions/
-chrome-versions/
+/models/
 MYMETA.*
 frame-*.png
 *.pl
@@ -24,6 +23,7 @@ Vosk.xs
 *.bs
 *.o
 blib/
-model-en/
-model-de/
-src/model
+/models/
+/model-en/
+/model-de/
+/src/model
