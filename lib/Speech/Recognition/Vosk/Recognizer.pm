@@ -16,9 +16,11 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
 =head1 SYNOPSIS
 
   use Speech::Recognition::Vosk::Recognizer;
+  # You need to download and extract an appropriate model
+  # from https://alphacephei.com/vosk/models
 
   my $recognizer = Speech::Recognition::Vosk::Recognizer->new(
-      model_dir => 'model-en',
+      model_dir => 'models/vosk-model-small-en-us-0.15', # use the directory name of the extracted model here
       sample_rate => 44100,
   );
 
@@ -56,15 +58,38 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
       sample_rate => 44100,
   );
 
+=over 4
+
+=item B<model_dir>
+
+The directory of the extracted model. Download these from L<https://alphacephei.com/vosk/models>
+and extract them somewhere.
+
 =cut
 
 has model_dir => (
     is => 'ro',
 );
 
+=item B<sample_rate>
+
+The sample rate of the PCM  signed, 16-bit, little-endian audio input.
+
+Default is 44100.
+
+=cut
+
 has sample_rate => (
     is => 'ro',
 );
+
+=item B<model>
+
+A premade Vosk model
+
+=back
+
+=cut
 
 has model => (
     is => 'lazy',
