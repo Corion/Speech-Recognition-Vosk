@@ -11,6 +11,8 @@ README
 README.mkdn
 scripts/vosk-recognizer.pl
 t/00-load.t
+t/01-recognize.t
+t/test.s16le.pcm
 testrules.yml
 todo.markdown
 Vosk.xs.in
