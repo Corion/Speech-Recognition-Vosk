@@ -58,6 +58,7 @@ my %module = (
     },
 
     PREREQ_PM => {
+        'utf8'               => 0, # some of our source code is UTF-8
         'Filter::signatures' => '0.09',
         'Moo'                => 2, # for some hashes-as-objects
         'JSON'               => 0,
