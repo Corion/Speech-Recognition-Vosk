@@ -15,15 +15,6 @@ frame-*.png
 *.pl
 .prove
 .patch
-build/
-src/*.o
-src/stream_vosk
-Vosk.c
-Vosk.xs
 *.bs
 *.o
 blib/
-/models/
-/model-en/
-/model-de/
-/src/model

@@ -1,5 +1,4 @@
 .gitignore
-build-vosk-api.sh
 Changes
 lib/Speech/Recognition/Vosk.pm
 lib/Speech/Recognition/Vosk/Recognizer.pm
@@ -7,15 +6,15 @@ LICENSE
 Makefile.PL
 MANIFEST
 MANIFEST.SKIP
+META.json
+META.yml
 README
 README.mkdn
-scripts/vosk-recognizer.pl
 t/00-load.t
 t/01-recognize.t
 t/test.s16le.pcm
 testrules.yml
 todo.markdown
-Vosk.xs.in
 xt/99-changes.t
 xt/99-compile.t
 xt/99-manifest.t
