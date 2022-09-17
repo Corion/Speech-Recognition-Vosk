@@ -28,7 +28,7 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
   if( $^O eq 'MSWin32' ) {
       # find the name of your audio device using
       # ffmpeg -list_devices true -f dshow -i dummy
-      $ffmpeg = encode('Latin-1','ffmpeg -hide_banner -nostats -ac 1 -ar 44100 -f dshow -i audio="Microphone Array (Intel® Smart Sound Technologie für digitale Mikrofone)" -f s16le pipe:1');
+      $ffmpeg = encode('Latin-1','ffmpeg -hide_banner -nostats -f dshow -i audio="Microphone Array (Intel® Smart Sound Technologie für digitale Mikrofone)"  -ac 1 -ar 44100 -f s16lepipe:1');
   } else {
       # Record from Pule audio device 11
       $ffmpeg = 'ffmpeg -hide_banner -loglevel error -nostats -f pulse -i 11 -t 30 -ac 1 -ar 44100 -f s16le -';
@@ -47,16 +47,15 @@ Speech::Recognition::Vosk::Recognizer - offline speech recognition using Vosk
       } else {
           $spoken = $recognizer->partial_result();
       }
-      my $info = decode_json($spoken);
-      if( $info->{text}) {
-          print $info->{text},"\n";
+      if( $spoken->{text}) {
+          print $spoken->{text},"\n";
       } else {
           local $| = 1;
-          print $info->{partial}, "\r";
+          print $spoken->{partial}, "\r";
       };
   };
   my $spoken = $recognizer->final_result();
-  print $info->{text},"\n";
+  print $spoken->{text},"\n";
 
 =head1 METHODS
 
